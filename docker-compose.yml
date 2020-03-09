@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  segmenter:
+    build: ./otfp
+    ports:
+      - 1999:80
+    volumes:
+      - ./otfp/nginx.conf:/usr/local/nginx/conf/nginx.conf
+    depends_on:
+      - goofy-rundown
+  goofy-rundown:
+    build: ./rundown
+    ports:
+      - 1998:2828
