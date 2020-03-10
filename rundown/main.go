@@ -41,8 +41,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("%q", requestDump)
 
-	firstClipTime, _ := time.Parse(time.RFC3339, "2020-03-09T01:21:00+00:00")
-	segmentBaseTime, _ := time.Parse(time.RFC3339, "2020-03-09T01:20:00+00:00")
+	firstClipTime, _ := time.Parse(time.RFC3339, "2020-03-09T03:02:00+00:00")
+	segmentBaseTime, _ := time.Parse(time.RFC3339, "2020-03-09T03:02:00+00:00")
 
 	example := Payload{
 		PlaylistType:    "live",
@@ -56,15 +56,49 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				Clips: []Clip{
 					Clip{
 						Type: "source",
-						Path: "/files/startrek.mp4",
+						Path: "/files/startrek_1080p.mp4",
 					},
 					Clip{
 						Type: "source",
-						Path: "/files/goodfight.mp4",
+						Path: "/files/goodfight_1080p.mp4",
 					},
 					Clip{
 						Type: "source",
-						Path: "/files/nfl.mp4",
+						Path: "/files/nfl_1080p.mp4",
+					},
+				},
+			},
+			Sequence{
+				Language: "eng",
+				Clips: []Clip{
+					Clip{
+						Type: "source",
+						Path: "/files/startrek_720p.mp4",
+					},
+					Clip{
+						Type: "source",
+						Path: "/files/goodfight_720p.mp4",
+					},
+					Clip{
+						Type: "source",
+						Path: "/files/nfl_720p.mp4",
+					},
+				},
+			},
+			Sequence{
+				Language: "eng",
+				Clips: []Clip{
+					Clip{
+						Type: "source",
+						Path: "/files/startrek_360p.mp4",
+					},
+					Clip{
+						Type: "source",
+						Path: "/files/goodfight_360p.mp4",
+					},
+					Clip{
+						Type: "source",
+						Path: "/files/nfl_360p.mp4",
 					},
 				},
 			},
