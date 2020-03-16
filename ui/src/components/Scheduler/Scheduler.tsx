@@ -1,38 +1,169 @@
-import React from "react";
-import Paper from "@material-ui/core/Paper";
-import { useStyles, Props } from './types';
-import { ViewState } from "@devexpress/dx-react-scheduler";
-import { Grid, TableContainer } from '@material-ui/core';
+import * as React from 'react';
+import Paper from '@material-ui/core/Paper';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import moment from 'moment';
+import {unitOfTime} from 'moment';
+import {
+  ViewState, AppointmentModel,
+} from '@devexpress/dx-react-scheduler';
 import {
   Scheduler,
   WeekView,
+  DayView,
   Appointments,
-} from "@devexpress/dx-react-scheduler-material-ui";
-import { appointments } from "./data";
+  Toolbar,
+  DateNavigator,
+  ViewSwitcher,
+  AppointmentForm,
+  AppointmentTooltip,
+  TodayButton,
+} from '@devexpress/dx-react-scheduler-material-ui';
+
+const URL = 'https://js.devexpress.com/Demos/Mvc/api/SchedulerData/Get';
+
+const makeQueryString = (currentDate: Date, currentViewName: string) => {
+  const format = 'YYYY-MM-DDTHH:mm:ss';
+  const start = moment(currentDate).startOf(currentViewName.toLowerCase() as unitOfTime.StartOf);
+  const end = start.clone().endOf(currentViewName.toLowerCase() as unitOfTime.StartOf);
+  return encodeURI(`${URL}?filter=[["EndDate", ">", "${start.format(format)}"],["StartDate", "<", "${end.format(format)}"]]`);
+};
+
+const styles:any = {
+  toolbarRoot: {
+    position: 'relative',
+  },
+  progress: {
+    position: 'absolute',
+    width: '100%',
+    bottom: 0,
+    left: 0,
+  },
+  container: {
+    'padding-top': '15px',
+    'margin-left': 'auto',
+    'margin-right': 'auto',
+    'max-width': '1400px',
+  },
+};
+
+const mapAppointmentData = (appointment: AppointmentModel) => ({
+  ...appointment,
+  startDate: appointment.StartDate,
+  endDate: appointment.EndDate,
+  title: appointment.Text,
+});
+
+interface State {
+  loading: boolean,
+  currentDate: Date,
+  currentViewName: string,
+  data: any,
+}
 
 const CustomAppointment: React.ComponentType<Appointments.AppointmentProps> = (props) => {
   return <Appointments.Appointment {...props} style={{ backgroundColor: '#009688' }} />;
 };
 
-const GoofyScheduler = (props: Props): JSX.Element => {
-  const classes = useStyles();
+export default class GoofyScheduler extends React.Component<{}, State> implements JSX.ElementClass {
+  lastQuery:string = '';
 
-  return (
-    <Grid justify='center' className={classes.container}>
-      <Paper elevation={2} style={{ width: "100%" }}>
-        <TableContainer>
-          <div className={classes.tableHeader}>
-              CBS Sports SideArm
-          </div>
-        </TableContainer>
-        <Scheduler data={appointments}>
-          <ViewState currentDate="2018-06-28" />
-          <WeekView startDayHour={9} endDayHour={19} />
-          <Appointments appointmentComponent={CustomAppointment} />
-        </Scheduler>
-      </Paper>
-    </Grid>
-  );
+  constructor(p: {}) {
+    super(p);
+    this.state = {
+      loading: true,
+      currentDate: new Date('2017-05-23'),
+      currentViewName: 'Week',
+      data: null,
+    };
+
+    this.loadData = this.loadData.bind(this);
+    this.currentViewNameChange = this.currentViewNameChange.bind(this);
+    this.currentDateChange = this.currentDateChange.bind(this);
+  }
+
+  currentViewNameChange(currentViewName:string) {
+    this.setState({ currentViewName, loading: true });
+  }
+
+  currentDateChange(currentDate:Date) {
+    this.setState({ currentDate, loading: true });
+  }
+
+  componentDidMount() {
+    this.loadData();
+  }
+
+  componentDidUpdate() {
+    this.loadData();
+  }
+
+  loadData() {
+    const { currentDate, currentViewName } = this.state;
+    const queryString = makeQueryString(currentDate, currentViewName);
+    console.log("Query string: ", queryString === this.lastQuery)
+    if (queryString === this.lastQuery) {
+      return;
+    }
+    fetch(queryString)
+      .then(response => response.json())
+      .then(({ data }) => {
+        setTimeout(() => {
+          this.setState({
+            data,
+            loading: false,
+          });
+          this.lastQuery = queryString;
+        }, 600);
+      })
+      .catch(() => this.setState({ loading: false }));
+  }
+
+  render():JSX.Element {
+    const {
+      data, loading,
+      currentDate, currentViewName,
+    } = this.state;
+
+    const formattedData = data ? data.map(mapAppointmentData) : [];
+
+    return (
+      <div style={styles.container}>
+        <Paper elevation={2}>
+          <Scheduler
+            data={formattedData}
+            height={900}
+          >
+            <ViewState
+              currentDate={currentDate}
+              currentViewName={currentViewName}
+              onCurrentViewNameChange={this.currentViewNameChange}
+              onCurrentDateChange={this.currentDateChange}
+            />
+            <DayView
+              startDayHour={9}
+              endDayHour={18}
+            />
+            <WeekView
+              startDayHour={9}
+              endDayHour={18}
+            />
+            <Appointments appointmentComponent={CustomAppointment} />
+            <Toolbar />
+            <LinearProgress 
+              className={styles.progress} 
+              style={{display: loading ? 'block' : 'none' }}
+            />
+            <DateNavigator />
+            <TodayButton />
+            <ViewSwitcher />
+            <AppointmentTooltip
+              showOpenButton
+              showCloseButton
+            />
+            <AppointmentForm readOnly />
+          </Scheduler>
+        </Paper>
+      </div>
+    );
+  }
 }
-
-export default GoofyScheduler;
