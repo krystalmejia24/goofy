@@ -1,15 +1,15 @@
-import { green, red, orange } from '@material-ui/core/colors';
+import { teal, red, orange } from '@material-ui/core/colors';
 import { createMuiTheme } from '@material-ui/core/styles';
 
-const primaryColor = green;
+const primaryColor = teal;
 
 export default createMuiTheme({
     palette: {
-        type: 'dark',
+        type: 'light',
         primary: {
             dark: primaryColor[700],
             light: red.A200,
-            main: primaryColor[900],
+            main: primaryColor[800],
         },
         secondary: {
             dark: red.A700,

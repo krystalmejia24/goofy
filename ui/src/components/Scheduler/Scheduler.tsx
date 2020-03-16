@@ -11,7 +11,7 @@ import {
 import { appointments } from "./data";
 
 const CustomAppointment: React.ComponentType<Appointments.AppointmentProps> = (props) => {
-  return <Appointments.Appointment {...props} style={{ backgroundColor: '#388e3c' }} />;
+  return <Appointments.Appointment {...props} style={{ backgroundColor: '#009688' }} />;
 };
 
 const GoofyScheduler = (props: Props): JSX.Element => {
