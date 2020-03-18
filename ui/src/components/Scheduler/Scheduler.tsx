@@ -19,14 +19,24 @@ import {
   TodayButton,
 } from '@devexpress/dx-react-scheduler-material-ui';
 
-const URL = 'http://flv.io/goofy/api/data.json';
-
 const makeQueryString = (currentDate: Date, currentViewName: string) => {
   const format = 'YYYY-MM-DDTHH:mm:ss';
   const start = moment(currentDate).startOf(currentViewName.toLowerCase() as unitOfTime.StartOf);
   const end = start.clone().endOf(currentViewName.toLowerCase() as unitOfTime.StartOf);
   return encodeURI(`${URL}?filter=[["EndDate", ">", "${start.format(format)}"],["StartDate", "<", "${end.format(format)}"]]`);
 };
+
+const getParameterByName = (name:string) => {
+  const URL = window.location.href;
+  name = name.replace(/[\[\]]/g, '\\$&');
+  var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+      results = regex.exec(URL);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+const URL = getParameterByName('url');
 
 const styles:any = {
   toolbarRoot: {
@@ -61,6 +71,11 @@ interface State {
 }
 
 const CustomAppointment: React.ComponentType<Appointments.AppointmentProps> = (props) => {
+  if (props.data.EventType && props.data.EventType == 'AdBreak') {
+    return <Appointments.Appointment {...props} style={{ backgroundColor: '#3f51b5' }} />;
+  } else if (props.data.EventType && props.data.EventType == 'Personalized') {
+    return <Appointments.Appointment {...props} style={{ backgroundColor: '#d32f2f' }} />;
+  }
   return <Appointments.Appointment {...props} style={{ backgroundColor: '#009688' }} />;
 };
 
