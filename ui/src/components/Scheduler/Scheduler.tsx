@@ -39,10 +39,10 @@ const styles:any = {
     left: 0,
   },
   container: {
-    'padding-top': '15px',
-    'margin-left': 'auto',
-    'margin-right': 'auto',
-    'max-width': '1400px',
+    paddingTop: '15px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    maxWidth: '1400px',
   },
 };
 
@@ -150,7 +150,6 @@ export default class GoofyScheduler extends React.Component<{}, State> implement
             <Appointments appointmentComponent={CustomAppointment} />
             <Toolbar />
             <LinearProgress 
-              className={styles.progress} 
               style={{display: loading ? 'block' : 'none' }}
             />
             <DateNavigator />

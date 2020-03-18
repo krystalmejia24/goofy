@@ -26,7 +26,7 @@ const App = (props: Props): JSX.Element => {
                         color="inherit"
                         className={classes.GoofyTitle}
                     >
-                        Scheduling & Rundown System
+                        Scheduling & Playout System
                     </Typography>
                 </Toolbar>
             </AppBar>
