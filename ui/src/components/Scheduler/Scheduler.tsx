@@ -19,7 +19,7 @@ import {
   TodayButton,
 } from '@devexpress/dx-react-scheduler-material-ui';
 
-const URL = 'https://js.devexpress.com/Demos/Mvc/api/SchedulerData/Get';
+const URL = 'http://flv.io/goofy/api/data.json';
 
 const makeQueryString = (currentDate: Date, currentViewName: string) => {
   const format = 'YYYY-MM-DDTHH:mm:ss';
@@ -100,7 +100,6 @@ export default class GoofyScheduler extends React.Component<{}, State> implement
   loadData() {
     const { currentDate, currentViewName } = this.state;
     const queryString = makeQueryString(currentDate, currentViewName);
-    console.log("Query string: ", queryString === this.lastQuery)
     if (queryString === this.lastQuery) {
       return;
     }
@@ -131,7 +130,7 @@ export default class GoofyScheduler extends React.Component<{}, State> implement
         <Paper elevation={2}>
           <Scheduler
             data={formattedData}
-            height={900}
+            height={1000}
           >
             <ViewState
               currentDate={currentDate}
